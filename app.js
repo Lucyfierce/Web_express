@@ -2,8 +2,6 @@ const express = require('express')
 
 const app = express ()
 
-app.use(express.json())
-
 let musicos = [
     {
         id: 1,
@@ -26,9 +24,36 @@ let musicos = [
     },
 ]
 
+app.use(express.json())
+
 app.get('/musicos', (req, res) => {
     res.send(musicos)
 })
+
+app.post('/musicos', (req, res) => {
+    musicos.push(req.body)
+    res.send(musicos)
+})
+
+app.put('/musicos/:id', (req, res) => {
+    let musico = musicos.find(mus => mus.id == req.params.id)
+
+    if (!musico){
+         
+    return res.status(400).json({ error: 'Usuário não encontrado.' });
+    }
+    musico.nome = req.body.nome
+    musico.instrumento = req.body.intrumento
+    musico.musica = req.body.musica
+    res.send(musicos)
+})
+
+app.delete('/musicos/:id', (req, res) => {
+    let musico = musicos.find(mus => mus.id == req.params.id)
+    musicos.splice(musicos.indexOf(musico), 1)
+    res.status(200).send(musicos)
+})
+
 
 app.listen(3000, () => {
     console.log('Rodando na porta 3000')
